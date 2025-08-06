@@ -1,34 +1,78 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  
+  const [password , setPassword] = useState('');
+  const [length , setLength] = useState(8);
+  const [hasNumber , setHasNumber] = useState(false);
+  const [hasSymbol , setHasSymbol] = useState(false);
+
+  const generatePassword = () => {
+
+  }
+
+  const handleNumberChange = () => {
+
+    setHasNumber(!hasNumber);
+  }
+
+  const handleSymbolChange = () => {
+
+    setHasSymbol(!hasSymbol);
+  }
+
+  const handleLengthChange = (e) => {
+
+    setLength(e.target.value)
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <h1>Password Generator</h1>
+      <form >
+        <div>
+          {password}
+        </div>
+
+        <div>
+          <label>Character Length</label>
+          <input 
+            type="range"
+            min={8}
+            max={100}
+            value={length}
+            onChange={handleLengthChange}
+          />
+        </div>
+
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              checked={hasNumber}
+              onChange={handleNumberChange}
+            />
+            Include Numbers
+          </label>
+        </div>
+
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              checked={hasSymbol}
+              onChange={handleSymbolChange}
+            />
+            Include Symbols
+          </label>
+        </div>
+
+        <button>Submit</button>
+
+      </form>
+
+    </div>
   )
 }
 
