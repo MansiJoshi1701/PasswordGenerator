@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
@@ -7,6 +7,8 @@ function App() {
   const [length , setLength] = useState(8);
   const [hasNumber , setHasNumber] = useState(false);
   const [hasSymbol , setHasSymbol] = useState(false);
+  const [copied, setCopied] = useState(false);
+
 
   function getRandomIndex(min, max) {
 
@@ -20,92 +22,115 @@ function App() {
   }
 
 
-  const generatePassword = (e) => {
+  const generatePassword = () => {
 
-    e.preventDefault();
-
-    let alphas = ['Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M','q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l','z','x','c','v','b','n','m'];
+    const alphas = ['Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M','q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l','z','x','c','v','b','n','m'];
     const nums = [0,1,2,3,4,5,6,7,8,9];
-    const symbols = ['!','@','#','$','%','^','&','*'];
+    const symbols = ['!','@','#','$','%','^','&','*','(',')','{','}','[',']',':',';','/','?','>','<','~','`','+','=','-','_','"'];
+
+
+    let charSet = [...alphas];
+    if(hasNumber) charSet = charSet.concat(nums);
+    if(hasSymbol) charSet = charSet.concat(symbols);
+
 
     let tempString = "";
-    if(hasNumber) alphas = alphas.concat(nums);
-
-    if(hasSymbol) alphas = alphas.concat(symbols);
-
-    
     for(let i = 1 ; i <= length ; i++){
 
       //1. choose a random index
-      const ind = getRandomIndex(0,alphas.length-1);
-
-      tempString += alphas[ind];
+      const ind = getRandomIndex(0,charSet.length-1);
+      tempString += charSet[ind];
     }
 
     setPassword(tempString);
     
   }
 
-  const handleNumberChange = () => {
+  // useEffect hook to generate a new password whenever any of options change
+  useEffect(() => {
+    generatePassword();
+  }, [length,hasNumber,hasSymbol])
 
-    setHasNumber(!hasNumber);
-  }
 
-  const handleSymbolChange = () => {
+  // Function to handle copying the password to the clipboard
+    const handleCopy = (e) => {
 
-    setHasSymbol(!hasSymbol);
-  }
+    }
 
-  const handleLengthChange = (e) => {
 
-    setLength(e.target.value);
-  }
+ 
+
 
   return (
-    <div>
-      <h1>Password Generator</h1>
-      <form onSubmit={e => generatePassword(e)}>
-        <div>
-          <span>Password: {password}</span>
+    <div className="flex items-center justify-center min-h-screen bg-zinc-900 font-sans p-4">
+      <div className="bg-zinc-800 text-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        <h1 className="text-3xl font-bold text-center mb-6 text-zinc-100">Password Generator</h1>
+      
+        {/* Password display area */}
+        <div className="mb-6 flex items-center justify-between gap-2">
+          <span className="flex-1 bg-zinc-700 text-zinc-200 text-lg p-3 rounded-lg font-mono truncate">
+            {password}
+          </span>
+
+          <button
+            onClick={handleCopy}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-5 rounded-lg transition-colors duration-200 shadow-md transform hover:scale-105"
+          >
+            {copied ? 'Copied!' : 'Copy'}
+          </button>
         </div>
 
-        <div>
-          <label>Character Length : {length}</label>
-          <input 
-            type="range"
-            min={8}
-            max={100}
-            value={length}
-            onChange={handleLengthChange}
-          />
-        </div>
 
-        <div>
-          <label>
+        {/* Options and settings */}
+        <div className="space-y-5">
+          {/* Character length slider */}
+          <div className="flex flex-col">
+            <label className="text-zinc-400 mb-2">Character Length : {length}</label>
+            <input 
+              type="range"
+              min={8}
+              max={50}
+              value={length}
+              onChange={e => setLength(Number(e.target.value))}
+              className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer"
+            />
+          </div>
+
+          {/* Checkbox for numbers */}
+          <div className="flex items-center">
             <input
               type="checkbox"
               checked={hasNumber}
-              onChange={handleNumberChange}
+              onChange={() => setHasNumber(!hasNumber)}
+              className="h-5 w-5 rounded text-blue-600 focus:ring-blue-500"
             />
-            Include Numbers
-          </label>
-        </div>
+            <label className="ml-2 text-zinc-300">
+              Include Numbers
+            </label>
+          </div>
 
-        <div>
-          <label>
+          {/* Checkbox for symbols */}
+          <div>
             <input
               type="checkbox"
               checked={hasSymbol}
-              onChange={handleSymbolChange}
+              onChange={() => setHasSymbol(!hasSymbol)}
+              className="h-5 w-5 rounded text-blue-600 focus:ring-blue-500"
             />
-            Include Symbols
-          </label>
+            <label className="ml-2 text-zinc-300">
+              Include Symbols
+            </label>
+          </div>
+
+          {/* <button
+            onClick={generatePassword}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition-colors duration-200 shadow-md transform hover:scale-105"
+          >
+            Submit
+          </button> */}
+
         </div>
-
-        <button>Submit</button>
-
-      </form>
-
+      </div>
     </div>
   )
 }
