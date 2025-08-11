@@ -48,12 +48,28 @@ function App() {
 
   // useEffect hook to generate a new password whenever any of options change
   useEffect(() => {
+    setCopied(false);
     generatePassword();
   }, [length,hasNumber,hasSymbol])
 
 
   // Function to handle copying the password to the clipboard
     const handleCopy = (e) => {
+
+      try{
+        // Create a temporary textarea element to hold the text
+        const textarea = document.createElement('textarea');
+        textarea.value = password;
+        document.body.appendChild(textarea);
+        textarea.select();
+        // Use execCommand('copy') which is more reliable in iframes
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        setCopied(true); // Set the copied state to true
+
+      } catch(err){
+        console.error('Failed to copy text: ', err);
+      }
 
     }
 
@@ -66,19 +82,19 @@ function App() {
       <div className="bg-zinc-800 text-white p-8 rounded-xl shadow-lg w-full max-w-md">
         <h1 className="text-3xl font-bold text-center mb-6 text-zinc-100">Password Generator</h1>
       
-        {/* Password display area */}
-        <div className="mb-6 flex items-center justify-between gap-2">
-          <span className="flex-1 bg-zinc-700 text-zinc-200 text-lg p-3 rounded-lg font-mono truncate">
-            {password}
-          </span>
+          {/* Password display area */}
+          <div className="mb-6 flex items-center justify-between gap-2">
+            <span className="flex-1 bg-zinc-700 text-zinc-200 text-lg p-3 rounded-lg font-mono truncate">
+              {password}
+            </span>
 
-          <button
-            onClick={handleCopy}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-5 rounded-lg transition-colors duration-200 shadow-md transform hover:scale-105"
-          >
-            {copied ? 'Copied!' : 'Copy'}
-          </button>
-        </div>
+            <button
+              onClick={handleCopy}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-5 rounded-lg transition-colors duration-200 shadow-md transform hover:scale-105"
+            >
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
 
 
         {/* Options and settings */}
